@@ -1,0 +1,19 @@
+{% extends 'authinventory/base.html' %}
+
+{% block content %}
+    
+<h1>SignUp</h1>
+
+{% if error %}
+    {{error}}
+{% endif %}
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form.username}}
+    {{form.password}}
+    {{form.confirmPassword}}
+    <button type="submit">Sign Up</button>
+</form>
+
+
+{% endblock %}

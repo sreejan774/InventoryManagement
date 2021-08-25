@@ -1,0 +1,15 @@
+{% extends 'authinventory/base.html' %}
+
+{% block content %}
+    
+<h1>Login</h1>
+{% if error %}
+    {{error}}
+{% endif %}
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit">Login</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+{% include 'main/navbar.html' %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+    <!-- Stock Table -->
+    <h3>Stock {{ itemType.capitalize }}</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm table-hover">
+          <thead class="header">
+            <tr>
+              <th scope="col">Serial Number</th>
+              <th scope="col">Date Received</th>
+              <th scope="col">Supplier Name</th>
+              <th scope="col">Assign Product</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in stock %}
+            <tr>
+              <td>{{ item.serial_num }}</td>
+              <td>{{ item.date_received }}</td>
+              <td>{{ item.supplier }}</td>
+              <td>
+                <button type="button" class="btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{item.pk}}">
+                  Assign
+                </button>
+                <!-- Bootstrap Modal to assign product form -->
+                <div class="modal fade" id="staticBackdrop{{item.pk}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">{{item.serial_num}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="{% url 'assignProduct' pk=item.pk %}" method="POST">
+                          {% csrf_token %}
+                          <p>Select Employee</p>
+                          <label for="">Name</label>
+                          {{assignForm.empName}}
+                          <label for="">Department</label>
+                          {{assignForm.department}}
+                          <label for="">Designation</label>
+                          {{assignForm.designation}}
+                          <button type="submit" class="btn btn-primary">Assign</button>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    <!-- Assignment table -->
+    <h3>Assigned {{itemType.capitalize}}</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm table-hover">
+          <thead class="header">
+            <tr>
+              <th scope="col">Serial Number</th>
+              <th scope="col">Assigned To</th>
+              <th scope="col">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for item in assign %}
+            <tr>
+              <td>{{ item.serial_num }}</td>
+              <td>{{ item.emp_id }}</td>
+              <td>{{ item.specification }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- Under Repair Table -->
+      <h3>Under Repair {{itemType.capitalize}}</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm table-hover">
+          <thead class="header">
+            <tr>
+                <th scope="col">Serial Number</th>
+                <th scope="col">Specification</th>
+                <th scope="col">Supplier Name</th>
+                <th scope="col">Mark As Repair</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in repair %}
+            <tr>
+              <td>{{ item.serial_num }}</td>
+              <td>{{ item.specification }}</td>
+              <td>{{ item.supplier_id }}</td>
+              <td><a href="{% url 'markRepaired' pk=item.pk %}">Mark Repaired</a></td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+
+{% endblock %}
