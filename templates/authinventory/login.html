@@ -1,15 +1,28 @@
 {% extends 'authinventory/base.html' %}
 
 {% block content %}
-    
-<h1>Login</h1>
-{% if error %}
-    {{error}}
-{% endif %}
-<form action="" method="POST">
-    {% csrf_token %}
-    {{form}}
-    <button type="submit">Login</button>
-</form>
+
+<main class="form-signin text-center" >
+    <form  action="" method="POST">
+      {% csrf_token %}
+      <h1 class="h3 mb-3 fw-normal">Please Log In</h1>
+        {% if error %}
+        <p>{{error}}</p>
+        {% endif %}
+        <div class="form-group">
+            <div class="form-floating">
+                {{form.username}}
+                <label for="floatingInput">Username</label>
+            </div>
+            <div class="form-floating">
+                {{form.password}}        
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Log In</button>
+            <p class="mt-5 mb-3 text-muted">Don't have an Account : <a href="{% url 'signup' %}"> Sign Up</a></p>
+            
+        </div>
+    </form>
+</main>
 
 {% endblock %}

@@ -46,6 +46,10 @@ def index(request):
     # print(prodList)
     # print(empList)
     print(len(employee))
+    sendRepairForm = forms.sendForRepair()
+    addEmployeeForm = forms.addEmployee()
+    addProductForm = forms.addProduct()
+    addSupplierForm = forms.addSupplier()
     context = {
         'employeesDetails' : empList,
         'totalProducts' : len(stock) + len(repair) + len(assigned),
@@ -53,6 +57,10 @@ def index(request):
         'numSupplier' : len(suppliers),
         'numUnderRepair' : len(repair),
         'productDetails' : prodList,
+        'sendRepairForm' : sendRepairForm,
+        'addEmployeeForm' : addEmployeeForm,
+        'addProductForm' : addProductForm,
+        'addSupplierForm' : addSupplierForm
 
     }
     return render(request,'main/index.html',context)
@@ -64,32 +72,30 @@ def addEmployee(request):
     if request.method == 'POST':
         addEmpForm = forms.addEmployee(request.POST)
         if addEmpForm.is_valid():
-            name = addEmpForm.cleaned_data['name']
-            contact = addEmpForm.cleaned_data['contact']
-            designation = addEmpForm.cleaned_data['designation']
-            department = addEmpForm.cleaned_data['department']
-            desk_num = addEmpForm.cleaned_data['desk_num']
-            floor = addEmpForm.cleaned_data['floor']
+            try:
+                name = addEmpForm.cleaned_data['name']
+                contact = addEmpForm.cleaned_data['contact']
+                designation = addEmpForm.cleaned_data['designation']
+                department = addEmpForm.cleaned_data['department']
+                desk_num = addEmpForm.cleaned_data['desk_num']
+                floor = addEmpForm.cleaned_data['floor']
 
-            employee = models.Employee(
-                name = name,
-                contact = contact,
-                designation = designation,
-                department = department,
-                floor = floor,
-                desk_num = desk_num
-            )
+                employee = models.Employee(
+                    name = name,
+                    contact = contact,
+                    designation = designation,
+                    department = department,
+                    floor = floor,
+                    desk_num = desk_num
+                )
 
-            employee.save()
+                employee.save()
 
-            return redirect('index')            
+                return redirect('index')    
+            except:
+                return HttpResponse("Some Error Occured")
 
-
-
-    context = {
-        'form': addEmpForm
-    }
-    return render(request,'main/addEmployee.html',context)
+    return HttpResponse("Some Error Occured")
 
 @login_required(login_url='/auth/login')
 def addSupplier(request):
@@ -97,27 +103,24 @@ def addSupplier(request):
     if request.method == 'POST':
         addSupplierForm = forms.addSupplier(request.POST)
         if addSupplierForm.is_valid():
-            name = addSupplierForm.cleaned_data['name']
-            description = addSupplierForm.cleaned_data['description']
-            contact = addSupplierForm.cleaned_data['contact']
+            try:
+                name = addSupplierForm.cleaned_data['name']
+                description = addSupplierForm.cleaned_data['description']
+                contact = addSupplierForm.cleaned_data['contact']
 
 
-            supplier = models.Supplier(
-                name = name,
-                contact = contact,
-                description = description
-            )
+                supplier = models.Supplier(
+                    name = name,
+                    contact = contact,
+                    description = description
+                )
 
-            supplier.save()
+                supplier.save()
+            except:
+                return HttpResponse("Some Error Occured")
 
             return redirect('index')            
-
-
-
-    context = {
-        'form': addSupplierForm
-    }
-    return render(request,'main/addSupplier.html',context)
+    return HttpResponse("Some Error Occured")
 
 
 @login_required(login_url='/auth/login')
@@ -126,30 +129,27 @@ def addProduct(request):
     if request.method == 'POST':
         addPdtForm = forms.addProduct(request.POST)
         if addPdtForm.is_valid():
-            prod_name = addPdtForm.cleaned_data['prod_name']
-            serial_num = addPdtForm.cleaned_data['serial_num']
-            specification = addPdtForm.cleaned_data['specification']
-            date_received = addPdtForm.cleaned_data['date_received']
-            supplier = addPdtForm.cleaned_data['supplier']
-
-            prod = models.Stock(
-                prod_name = prod_name,
-                serial_num = serial_num,
-                specification = specification,
-                date_received = date_received,
-                supplier = supplier
-            )
-
-            prod.save()
-
-            return redirect('index')            
+            try:
+                prod_name = addPdtForm.cleaned_data['prod_name']
+                serial_num = addPdtForm.cleaned_data['serial_num']
+                specification = addPdtForm.cleaned_data['specification']
+                date_received = addPdtForm.cleaned_data['date_received']
+                supplier = addPdtForm.cleaned_data['supplier']
 
 
+                prod = models.Stock(
+                    prod_name = prod_name,
+                    serial_num = serial_num,
+                    specification = specification,
+                    date_received = date_received,
+                    supplier = supplier
+                )
 
-    context = {
-        'form': addPdtForm
-    }
-    return render(request,'main/addProduct.html',context)
+                prod.save()
+                return redirect('index')            
+            except:
+                return HttpResponse("Some Error Occured")            
+    return HttpResponse("Some Error Occured")
 
 
 @login_required(login_url='/auth/login')
@@ -313,6 +313,7 @@ def markRepaired(request,pk):
 
     return HttpResponse("done")
 
+@login_required(login_url='/auth/login')
 def assignProduct(request,pk):
     if request.method == "POST":
         name = request.POST.get('empName')
@@ -351,3 +352,68 @@ def assignProduct(request,pk):
 
         return redirect('index')
         
+
+@login_required(login_url='/auth/login')
+def sendForRepair(request):
+    if request.method == "POST":
+        serial_num = request.POST.get('serial_num')
+        supplier = request.POST.get('supplier')
+
+        supplier_obj = models.Supplier.objects.filter(name = supplier)
+        if(len(supplier_obj) == 0):
+            print("Inside 1st If")
+            return HttpResponse("Supplier with this name doesnt exist")
+
+        print(supplier_obj)
+        print(type(supplier_obj))
+        prod_obj_stock = models.Stock.objects.filter(serial_num=serial_num)
+        prod_obj_assign = models.Assign.objects.filter(serial_num=serial_num)
+
+        if(len(prod_obj_stock) != 0):
+            print("Inside 2nd If")
+            # delete from stock table and move to repair table 
+            print(len(prod_obj_stock))
+            prod_obj_stock = prod_obj_stock[0]
+            prod_name = prod_obj_stock.prod_name 
+            serial_num = prod_obj_stock.serial_num 
+            specification = prod_obj_stock.specification 
+            date_received = prod_obj_stock.date_received 
+            
+            prod_obj_stock.delete()
+            repair_obj = models.Repair(
+                prod_name = prod_name,
+                serial_num = serial_num,
+                specification = specification,
+                date_received = date_received,
+                supplier_id = supplier_obj[0]
+            )
+
+            repair_obj.save()
+        elif(len(prod_obj_assign) != 0):
+            print("Inside 3rd If")
+            # delete from assign table and move to repair table 
+            prod_obj_assign = prod_obj_assign[0]
+            prod_name = prod_obj_assign.prod_name 
+            serial_num = prod_obj_assign.serial_num 
+            specification = prod_obj_assign.specification 
+            date_received = prod_obj_assign.date_received 
+            
+            prod_obj_assign.delete() 
+            repair_obj = models.Repair(
+                prod_name = prod_name,
+                serial_num = serial_num,
+                specification = specification,
+                date_received = date_received,
+                supplier_id = supplier_obj[0]
+            )
+
+            repair_obj.save()
+        else:
+            return HttpResponse("Product with Serial Number doesnt exist")
+        
+        return HttpResponse("Ok")
+        
+        
+
+
+

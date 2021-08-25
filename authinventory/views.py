@@ -18,7 +18,7 @@ def signup(request):
             confirmpassword = signupform.cleaned_data['confirmPassword']
 
             if(password != confirmpassword):
-                error = "Password didnt matched"
+                error = "Password Didn't Match"
             else:
                 try:
                     user = User.objects.create_user(

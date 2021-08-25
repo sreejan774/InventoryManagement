@@ -15,5 +15,6 @@ urlpatterns = [
     path('listSupplier/',views.listSupplier,name='listSupplier'),
     path('markRepaired/<int:pk>',views.markRepaired,name='markRepaired'),
     path('assignProduct/<int:pk>',views.assignProduct,name='assignProduct'),
+    path('sendForRepair/',views.sendForRepair,name='sendForRepair')
 
 ]

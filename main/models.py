@@ -27,7 +27,7 @@ class Employee(models.Model):
     designation = models.CharField(max_length=50)
     department = models.CharField(max_length=20,default=' ')
     floor = models.IntegerField(default=0,validators=[MinValueValidator(0)])
-    desk_num = models.CharField(max_length=20)
+    desk_num = models.CharField(max_length=20,unique=True)
 
     def __str__(self):
         return self.name 

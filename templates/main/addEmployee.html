@@ -5,12 +5,34 @@
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
-<form action="" method="post">
+<div class="container-fluid w-50" style="background-color: white; padding: 3%; margin: 3%;">
+    <h3>Add Employee</h3>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{form.name}}
+        </div>
+        <div class="mb-3">
+            {{form.contact}}
+        </div>
+        <div class="mb-3">
+            {{form.designation}}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Select Department</label>
+            {{form.department}}
+        </div>
+        <div class="mb-3">
+            {{form.desk_num}}
+        </div>
+        <div class="mb-3">
+            {{form.floor}}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add Employee</button>
+    </form>
+    
+</div>
 
-    {% csrf_token %} 
-    {{form}}
-    <button type="submit">Add Employee</button>
-
-</form>
 
 {% endblock %}
