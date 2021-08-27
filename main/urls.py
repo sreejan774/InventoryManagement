@@ -12,6 +12,7 @@ urlpatterns = [
     path('deleteProduct/<int:pk>',views.deleteProduct,name='deleteProduct'),
     path('products/<slug:slug>',views.showProduct,name='showProduct'),
     path('listEmployee/<slug:slug>',views.listEmployee,name='listEmployee'),
+    path('listRepair',views.listRepair,name="listRepair"),
     path('listSupplier/',views.listSupplier,name='listSupplier'),
     path('markRepaired/<int:pk>',views.markRepaired,name='markRepaired'),
     path('assignProduct/<int:pk>',views.assignProduct,name='assignProduct'),

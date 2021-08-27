@@ -45,7 +45,7 @@ def index(request):
 
     # print(prodList)
     # print(empList)
-    print(len(employee))
+    # print(len(employee))
     sendRepairForm = forms.sendForRepair()
     addEmployeeForm = forms.addEmployee()
     addProductForm = forms.addProduct()
@@ -129,13 +129,19 @@ def addProduct(request):
     if request.method == 'POST':
         addPdtForm = forms.addProduct(request.POST)
         if addPdtForm.is_valid():
-            try:
+            try:                
                 prod_name = addPdtForm.cleaned_data['prod_name']
                 serial_num = addPdtForm.cleaned_data['serial_num']
                 specification = addPdtForm.cleaned_data['specification']
                 date_received = addPdtForm.cleaned_data['date_received']
                 supplier = addPdtForm.cleaned_data['supplier']
 
+                product1 = models.Stock.objects.filter(serial_num = serial_num)
+                product2 = models.Assign.objects.filter(serial_num = serial_num)
+                product3 = models.Repair.objects.filter(serial_num = serial_num)
+
+                if(len(product1)!=0 or len(product2)!=0 or len(product3)!=0 ):
+                    return HttpResponse("Database already have a product with same serial number")
 
                 prod = models.Stock(
                     prod_name = prod_name,
@@ -285,9 +291,14 @@ def listSupplier(request):
     }
     return render(request,'main/listSupplier.html',context)
 
-# @login_required(login_url='/auth/login')
-# def listRepair(request):
-#     pass
+@login_required(login_url='/auth/login')
+def listRepair(request):
+    repair = models.Repair.objects.all()
+    context = {
+        "repair" : repair
+    }
+    return render(request,'main/listRepair.html',context)
+
 
 
 @login_required(login_url='/auth/login')
@@ -352,68 +363,54 @@ def assignProduct(request,pk):
 
         return redirect('index')
         
-
 @login_required(login_url='/auth/login')
 def sendForRepair(request):
     if request.method == "POST":
+        print("Inside if")
         serial_num = request.POST.get('serial_num')
         supplier = request.POST.get('supplier')
+        print("serial Num",serial_num)
+        print("supplier",supplier)
+        product1 = models.Stock.objects.filter(serial_num = serial_num)
+        product2 = models.Assign.objects.filter(serial_num = serial_num)
+        product3 = models.Repair.objects.filter(serial_num = serial_num)
+        if(len(product1)==0 and len(product2) == 0 and len(product3)==0):
+            return HttpResponse("Product with given serial number does not exist in database")
+        
+        prod_name = None
+        specification = None 
+        date_received = None
 
-        supplier_obj = models.Supplier.objects.filter(name = supplier)
-        if(len(supplier_obj) == 0):
-            print("Inside 1st If")
-            return HttpResponse("Supplier with this name doesnt exist")
-
-        print(supplier_obj)
-        print(type(supplier_obj))
-        prod_obj_stock = models.Stock.objects.filter(serial_num=serial_num)
-        prod_obj_assign = models.Assign.objects.filter(serial_num=serial_num)
-
-        if(len(prod_obj_stock) != 0):
-            print("Inside 2nd If")
-            # delete from stock table and move to repair table 
-            print(len(prod_obj_stock))
-            prod_obj_stock = prod_obj_stock[0]
-            prod_name = prod_obj_stock.prod_name 
-            serial_num = prod_obj_stock.serial_num 
+        if(len(product3) != 0):
+            return HttpResponse("Product with provided serial number is already under repair")
+        elif(len(product1) != 0 ):
+            prod_obj_stock = product1[0]
+            prod_name = prod_obj_stock.prod_name  
             specification = prod_obj_stock.specification 
             date_received = prod_obj_stock.date_received 
-            
             prod_obj_stock.delete()
-            repair_obj = models.Repair(
-                prod_name = prod_name,
-                serial_num = serial_num,
-                specification = specification,
-                date_received = date_received,
-                supplier_id = supplier_obj[0]
-            )
-
-            repair_obj.save()
-        elif(len(prod_obj_assign) != 0):
-            print("Inside 3rd If")
-            # delete from assign table and move to repair table 
-            prod_obj_assign = prod_obj_assign[0]
+        
+        else:
+            prod_obj_assign = product2[0]
             prod_name = prod_obj_assign.prod_name 
             serial_num = prod_obj_assign.serial_num 
             specification = prod_obj_assign.specification 
             date_received = prod_obj_assign.date_received 
             
             prod_obj_assign.delete() 
-            repair_obj = models.Repair(
+
+        supplier = models.Supplier.objects.get(pk=supplier)
+        repair_obj = models.Repair(
                 prod_name = prod_name,
                 serial_num = serial_num,
                 specification = specification,
                 date_received = date_received,
-                supplier_id = supplier_obj[0]
+                supplier_id = supplier
             )
+        repair_obj.save()
+        return redirect('index')        
 
-            repair_obj.save()
-        else:
-            return HttpResponse("Product with Serial Number doesnt exist")
-        
-        return HttpResponse("Ok")
-        
-        
+    return redirect('index')
 
 
 
