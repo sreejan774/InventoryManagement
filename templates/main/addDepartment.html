@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+{% include 'main/navbar.html' %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+
+<div class="container-fluid w-50" style="background-color: white; padding: 3%; margin: 3%;">
+    <h3>Add Department</h3>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{form.department}}
+        </div>
+        <div class="mb-3">
+            {{form.hod}}
+        </div>
+        <button type="submit" class="btn btn-dark" name="submit_type" value="delete">Add Department</button>
+    </form>
+
+{% endblock %}

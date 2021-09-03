@@ -4,9 +4,9 @@ from django.db.models.fields.related import ForeignKey,OneToOneField
 from django.contrib.auth.models import User 
 from django.core.validators import MinValueValidator
 from datetime import date
+from django.core.validators import RegexValidator
 
 # Create your models here.
-
 
 PROD_CHOICES = (
     ('DESKTOP','DESKTOP'),
@@ -19,9 +19,10 @@ PROD_CHOICES = (
     ('LAPTOP','LAPTOP'),
 )
 
-
 class Employee(models.Model):
     emp_id = models.AutoField(primary_key=True)
+    sap_number = models.CharField(max_length = 8,unique=True,default="")
+    staff_number = models.CharField(max_length = 10,unique=True,default="")
     name = models.CharField(max_length=50)
     contact = models.CharField(max_length=15,unique=True)
     designation = models.CharField(max_length=50)
@@ -40,6 +41,12 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
+class Department(models.Model):
+    department = models.CharField(max_length=100,unique=True)
+    hod = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.department)
 
 class Stock(models.Model):
     prod_id = models.AutoField(primary_key=True)

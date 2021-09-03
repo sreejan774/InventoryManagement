@@ -45,18 +45,12 @@
                           <form action="{% url 'assignProduct' pk=item.pk %}" method="POST">
                               {% csrf_token %}
                                 <div class="mb-3">
-                                    <label class="form-label">Employee Name</label>
-                                    {{assignForm.empName}}
+                                    {{assignForm.sap_number}}
                                     <!-- <input type="text" class="form-control" id="username" name="username" placeholder="Username" /> -->
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Department</label>
-                                    {{assignForm.department}}
+                                    {{assignForm.staff_number}}
                                     <!-- <input type="password" class="form-control" id="password" name="password" placeholder="Password" /> -->
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Designation</label>
-                                    {{assignForm.designation}}
                                 </div>
                                 <div class="modal-footer d-block">
                                     <button type="submit" class="btn btn-outline-dark float">Submit</button>
@@ -88,6 +82,7 @@
             <tr>
               <th scope="col">Serial Number</th>
               <th scope="col">Assigned To</th>
+              <th scope="col">SAP Number</th>
               <th scope="col">Specification</th>
             </tr>
           </thead>
@@ -97,6 +92,7 @@
             <tr>
               <td>{{ item.serial_num }}</td>
               <td>{{ item.emp_id }}</td>
+              <td>{{ item.emp_id.sap_number }}</td>
               <td>{{ item.specification }}</td>
             </tr>
             {% endfor %}

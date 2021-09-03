@@ -97,9 +97,12 @@
                             <label class="form-label" >Select Supplier</label>
                             {{addProductForm.supplier}}
                           </div>
-                          
                           <div class="modal-footer d-block">
                               <button type="submit" class="btn btn-outline-dark float">Add</button>
+                              <p>Supplier Doesn't Exist</p>
+                              <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalFormAddSupplier">
+                                Add Supplier
+                              </button>
                           </div>
                       </form>
                   </div>
@@ -123,14 +126,20 @@
                               {{addEmployeeForm.name}}
                           </div>
                           <div class="mb-3">
+                            {{addEmployeeForm.sap_number}}
+                          </div>
+                          <div class="mb-3">
+                            {{addEmployeeForm.staff_number}}
+                          </div>
+                          <div class="mb-3">
                               {{addEmployeeForm.contact}}
                           </div>
                           <div class="mb-3">
                             {{addEmployeeForm.designation}}
                           </div>
                           <div class="mb-3">
-                            <label class="form-label">Select Department</label>
-                            {{addEmployeeForm.department}}
+                              <label for="">Select Department</label>
+                              {{addEmployeeForm.department}}
                           </div>
                           <div class="mb-3">
                             {{addEmployeeForm.desk_num}}
@@ -260,6 +269,7 @@
               <tr>
                 <th scope="col">Department</th>
                 <th scope="col">Number of Employees</th>
+                <th scope="col">HOD</th>
               </tr>
             </thead>
             <tbody>
@@ -267,6 +277,7 @@
               <tr>
                 <td><a class="text-decoration-none" href="{% url 'listEmployee' slug=emp.department %}">{{ emp.department }}</a></td>
                 <td>{{ emp.numEmp }}</td>
+                <td>{{ emp.HOD }}</td>
               </tr>
               {% endfor %}
             </tbody>

@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required 
 from main import forms
 from main import models
-from main.forms import PROD_CHOICES,DEPARTMENT_CHOICES
+from main.forms import PROD_CHOICES
 
 # Create your views here.
 @login_required(login_url='/auth/login')
@@ -34,13 +34,16 @@ def index(request):
         prodList.append(prodDict)
 
     empList = []
-    for department in DEPARTMENT_CHOICES:
-        dept = department[0]
+    departmentChoices = models.Department.objects.all()
+    for d in departmentChoices:
+        dept = d.department
         employees = models.Employee.objects.filter(department = dept)
         numEmp = len(employees)
+        hod = d.hod
         empDict = {}
         empDict["department"] = dept 
         empDict["numEmp"] = numEmp 
+        empDict['HOD'] = hod
         empList.append(empDict)
 
     # print(prodList)
@@ -60,7 +63,7 @@ def index(request):
         'sendRepairForm' : sendRepairForm,
         'addEmployeeForm' : addEmployeeForm,
         'addProductForm' : addProductForm,
-        'addSupplierForm' : addSupplierForm
+        'addSupplierForm' : addSupplierForm,
 
     }
     return render(request,'main/index.html',context)
@@ -74,6 +77,8 @@ def addEmployee(request):
         if addEmpForm.is_valid():
             try:
                 name = addEmpForm.cleaned_data['name']
+                sap_number = addEmpForm.cleaned_data['sap_number']
+                staff_number = addEmpForm.cleaned_data['staff_number']
                 contact = addEmpForm.cleaned_data['contact']
                 designation = addEmpForm.cleaned_data['designation']
                 department = addEmpForm.cleaned_data['department']
@@ -82,15 +87,17 @@ def addEmployee(request):
 
                 employee = models.Employee(
                     name = name,
+                    sap_number = sap_number,
+                    staff_number = staff_number,
                     contact = contact,
                     designation = designation,
-                    department = department,
+                    department = department.department,
                     floor = floor,
                     desk_num = desk_num
                 )
 
                 employee.save()
-
+                
                 return redirect('index')    
             except:
                 return HttpResponse("Some Error Occured")
@@ -135,7 +142,8 @@ def addProduct(request):
                 specification = addPdtForm.cleaned_data['specification']
                 date_received = addPdtForm.cleaned_data['date_received']
                 supplier = addPdtForm.cleaned_data['supplier']
-
+                print(date_received)
+                
                 product1 = models.Stock.objects.filter(serial_num = serial_num)
                 product2 = models.Assign.objects.filter(serial_num = serial_num)
                 product3 = models.Repair.objects.filter(serial_num = serial_num)
@@ -143,6 +151,8 @@ def addProduct(request):
                 if(len(product1)!=0 or len(product2)!=0 or len(product3)!=0 ):
                     return HttpResponse("Database already have a product with same serial number")
 
+                if(date_received > date.today()): 
+                    return HttpResponse("Please enter a correct date")
                 prod = models.Stock(
                     prod_name = prod_name,
                     serial_num = serial_num,
@@ -163,6 +173,8 @@ def updateEmployee(request,pk):
     employee = models.Employee.objects.get(pk = pk)
     initial = {
         "name" : employee.name,
+        "sap_number" : employee.sap_number,
+        "staff_number": employee.staff_number,
         "contact" : employee.contact,
         "designation" : employee.designation,
         "department" : employee.department,
@@ -175,6 +187,8 @@ def updateEmployee(request,pk):
     if request.method == "POST":
         if request.POST.get('submit_type') == 'update':
             employee.name = request.POST.get('name')
+            employee.sap_number = request.POST.get('sap_number')
+            employee.staff_number = request.POST.get('staff_number')
             employee.contact = request.POST.get('contact')
             employee.designation = request.POST.get('designation')
             employee.department = request.POST.get('department')
@@ -322,20 +336,19 @@ def markRepaired(request,pk):
 
     obj.save()
 
-    return HttpResponse("done")
+    return redirect('index')
 
 @login_required(login_url='/auth/login')
 def assignProduct(request,pk):
     if request.method == "POST":
-        name = request.POST.get('empName')
-        department = request.POST.get('department')
-        designation = request.POST.get('designation')
+        sap_number = request.POST.get('sap_number')
+        staff_number = request.POST.get('staff_number')
 
         try:
             employee = models.Employee.objects.filter(
-                        name = name,
-                        department=department,
-                        designation=designation)[0]
+                       sap_number = sap_number,
+                       staff_number = staff_number
+                    )[0]
                     
             
             product = models.Stock.objects.get(pk=pk)
@@ -412,5 +425,26 @@ def sendForRepair(request):
 
     return redirect('index')
 
+@login_required(login_url='/auth/login')
+def addDepartment(request):
+    addDeptForm = forms.addDepartment()
+    if request.method == "POST":
+        try:
+            department = request.POST.get('department')
+            hod = request.POST.get('hod')
+
+            obj = models.Department(
+                department = department,
+                hod = hod
+            )
+            obj.save()
+            return redirect('index')
+        except:
+            return HttpResponse("Error occured check if the department already exists")
+    context = {
+        "form" : addDeptForm
+    }
+
+    return render(request,'main/addDepartment.html',context)
 
 
