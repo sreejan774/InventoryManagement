@@ -29,6 +29,7 @@ class Employee(models.Model):
     department = models.CharField(max_length=20,default=' ')
     floor = models.IntegerField(default=0,validators=[MinValueValidator(0)])
     desk_num = models.CharField(max_length=20,unique=True)
+    
 
     def __str__(self):
         return self.name 
@@ -44,7 +45,7 @@ class Supplier(models.Model):
 class Department(models.Model):
     department = models.CharField(max_length=100,unique=True)
     hod = models.CharField(max_length=100)
-
+    slug = models.SlugField(max_length = 250, null = True, blank = True)
     def __str__(self):
         return str(self.department)
 

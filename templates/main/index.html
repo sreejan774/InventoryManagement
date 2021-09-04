@@ -275,7 +275,7 @@
             <tbody>
               {% for emp in employeesDetails %}
               <tr>
-                <td><a class="text-decoration-none" href="{% url 'listEmployee' slug=emp.department %}">{{ emp.department }}</a></td>
+                <td><a class="text-decoration-none" href="{% url 'listEmployee' slug=emp.slug %}">{{ emp.department }}</a></td>
                 <td>{{ emp.numEmp }}</td>
                 <td>{{ emp.HOD }}</td>
               </tr>

@@ -44,6 +44,7 @@ def index(request):
         empDict["department"] = dept 
         empDict["numEmp"] = numEmp 
         empDict['HOD'] = hod
+        empDict['slug'] = d.slug
         empList.append(empDict)
 
     # print(prodList)
@@ -75,32 +76,32 @@ def addEmployee(request):
     if request.method == 'POST':
         addEmpForm = forms.addEmployee(request.POST)
         if addEmpForm.is_valid():
-            try:
-                name = addEmpForm.cleaned_data['name']
-                sap_number = addEmpForm.cleaned_data['sap_number']
-                staff_number = addEmpForm.cleaned_data['staff_number']
-                contact = addEmpForm.cleaned_data['contact']
-                designation = addEmpForm.cleaned_data['designation']
-                department = addEmpForm.cleaned_data['department']
-                desk_num = addEmpForm.cleaned_data['desk_num']
-                floor = addEmpForm.cleaned_data['floor']
+            # try:
+            name = addEmpForm.cleaned_data['name']
+            sap_number = addEmpForm.cleaned_data['sap_number']
+            staff_number = addEmpForm.cleaned_data['staff_number']
+            contact = addEmpForm.cleaned_data['contact']
+            designation = addEmpForm.cleaned_data['designation']
+            department = addEmpForm.cleaned_data['department']
+            desk_num = addEmpForm.cleaned_data['desk_num']
+            floor = addEmpForm.cleaned_data['floor']
 
-                employee = models.Employee(
-                    name = name,
-                    sap_number = sap_number,
-                    staff_number = staff_number,
-                    contact = contact,
-                    designation = designation,
-                    department = department.department,
-                    floor = floor,
-                    desk_num = desk_num
-                )
+            employee = models.Employee(
+                name = name,
+                sap_number = sap_number,
+                staff_number = staff_number,
+                contact = contact,
+                designation = designation,
+                department = department.department,
+                floor = floor,
+                desk_num = desk_num
+            )
 
-                employee.save()
-                
-                return redirect('index')    
-            except:
-                return HttpResponse("Some Error Occured")
+            employee.save()
+            
+            return redirect('index')    
+            # except:
+            #     return HttpResponse("Some Error Occured")
 
     return HttpResponse("Some Error Occured")
 
@@ -191,9 +192,13 @@ def updateEmployee(request,pk):
             employee.staff_number = request.POST.get('staff_number')
             employee.contact = request.POST.get('contact')
             employee.designation = request.POST.get('designation')
-            employee.department = request.POST.get('department')
+            department = request.POST.get('department')
             employee.floor = request.POST.get('floor')
             employee.desk_num = request.POST.get('desk_num')
+
+            deptName = models.Department.objects.get(pk = department).department
+            # print(deptName)
+            employee.department = deptName
 
             employee.save()
             return redirect('index') 
@@ -286,7 +291,7 @@ def listEmployee(request,slug):
         employees = models.Employee.objects.all()
         
     else:
-        employees = models.Employee.objects.filter(department = slug)
+        employees = models.Employee.objects.filter(department = slug.replace('-',' '))
 
     context = {
         "employees" : employees
@@ -432,10 +437,11 @@ def addDepartment(request):
         try:
             department = request.POST.get('department')
             hod = request.POST.get('hod')
-
+            slug = department.replace(' ','-')
             obj = models.Department(
                 department = department,
-                hod = hod
+                hod = hod,
+                slug = slug
             )
             obj.save()
             return redirect('index')
