@@ -7,6 +7,8 @@ body{
 }
 .table-box{
     height: 300px;
+    background-color: white;
+    padding: 2%;
 }
 
 .header{
@@ -26,6 +28,7 @@ body{
 .box{
     margin-top: 2%;
 }
+
 
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {

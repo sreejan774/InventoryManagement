@@ -1,28 +1,41 @@
 {% extends 'authinventory/base.html' %}
-
+{% load static %}
 {% block content %}
 
 <main class="form-signin text-center" >
-    <form  action="" method="POST">
-      {% csrf_token %}
-      <h1 class="h3 mb-3 fw-normal">Please Log In</h1>
-        {% if error %}
-        <p>{{error}}</p>
-        {% endif %}
-        <div class="form-group">
-            <div class="form-floating">
-                {{form.username}}
-                <label for="floatingInput">Username</label>
-            </div>
-            <div class="form-floating">
-                {{form.password}}        
-                <label for="floatingPassword">Password</label>
-            </div>
-            <button class="w-100 btn btn-lg btn-dark" type="submit">Log In</button>
-            <p class="mt-5 mb-3 text-muted">Don't have an Account : <a href="{% url 'signup' %}"> Sign Up</a></p>
-            
+    <div class="card">
+        <div class="center">
+            <img src="{% static 'images/Air-India-logo.png' %}" alt="" height="100px" width="140px">
         </div>
-    </form>
+        
+        <div class="card-body">
+            <form  action="" method="POST">
+                {% csrf_token %}
+                <h1 class="h3 mb-3 fw-normal ">Log In</h1>
+                  {% if error %}
+                  <p>{{error}}</p>
+                  {% endif %}
+                  <div class="form-group">
+                      <div class="form-floating">
+                          {{form.username}}
+                          <label for="floatingInput">Username</label>
+                      </div>
+                      <div class="form-floating">
+                          {{form.password}}        
+                          <label for="floatingPassword">Password</label>
+                      </div>
+                      <button class="w-100 btn btn-lg btn-dark" type="submit">Log In</button>
+                      <div  style="padding: 5%;">
+                        <a href="">Forgot Password</a> 
+                      </div>
+                      <p>Don't have an Account : <a href="{% url 'signup' %}"> Sign Up</a></p>
+                      
+                  </div>
+              </form>
+        </div>
+        
+    </div>
+    
 </main>
 
 {% endblock %}

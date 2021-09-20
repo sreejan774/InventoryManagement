@@ -1,32 +1,42 @@
 {% extends 'authinventory/base.html' %}
-
+{% load static %}
 {% block content %}
 <main class="form-signin text-center" >
-    <form  action="" method="POST">
-      {% csrf_token %}
-      <h1 class="h3 mb-3 fw-normal">Please Sign Up</h1>
-        {% if error %}
-        <p>{{error}}</p>
-        {% endif %}
-        <div class="form-group">
-            <div class="form-floating">
-                {{form.username}}
-                <label for="floatingInput">Username</label>
-            </div>
-            <div class="form-floating">
-                {{form.password}}        
-                <label for="floatingPassword">Password</label>
-            </div>
-            <div class="form-floating">
-                {{form.confirmPassword}}
-                <label for="floatingConfirmPassword">Confirm Password</label>       
-            </div>
-              
-            <button class="w-100 btn btn-lg btn-dark" type="submit">Sign in</button>
-            <p class="mt-5 mb-3 text-muted">Already have an Account : <a href="{% url 'login' %}"> Login</a></p>
-            
+    <div class="card">
+        <div class="center">
+            <img src="{% static 'images/Air-India-logo.png' %}" alt="" height="100px" width="140px">
         </div>
-    </form>
+        <div class="card-body">
+            <form  action="" method="POST">
+                {% csrf_token %}
+                <h1 class="h3 mb-3 fw-normal">Sign Up</h1>
+                  {% if error %}
+                  <p>{{error}}</p>
+                  {% endif %}
+                  <div class="form-group">
+                      <div class="form-floating">
+                          {{form.username}}
+                          <label for="floatingInput">Username</label>
+                      </div>
+                      <div class="form-floating">
+                          {{form.password}}        
+                          <label for="floatingPassword">Password</label>
+                      </div>
+                      <div class="form-floating">
+                          {{form.confirmPassword}}
+                          <label for="floatingConfirmPassword">Confirm Password</label>       
+                      </div>
+                        
+                      <button class="w-100 btn btn-lg btn-dark" type="submit">Sign in</button>
+                      
+                      <p class="mt-5 mb-3 text-muted">Already have an Account : <a href="{% url 'login' %}"> Login</a></p>
+                      
+                  </div>
+              </form>
+        </div>
+
+    </div>
+    
 </main>
 
 
