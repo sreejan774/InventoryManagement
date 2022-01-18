@@ -1,13 +1,11 @@
-# Covileer
-Project for HackOn2.0  
-The project aims to provide a platform for supplying delivery assistance to people affected adversely with COVID-19.
-The service used in the platform gives non-covid affected people to signup as volunteers and quarantined people as users.
-On the platform they can connect with each other and the volunteer can deliver the essential items that user has requested.
+# Inventory Management System
+ 
+The project aims to provide a platform for inventory management for an hypothetical firm. The services this application provides include storing and updating employee details, products details. It also takes care of which all products are assigned to a perticular employee. The other functionalities include storing the suppliers list and manipulating them. Also there is a seperate section for the products that are under repair. 
 
 ### Running Project Locally 
 First clone the repository to your local
 ```bash
-git clone https://github.com/sreejan774/Covileer.git
+git clone https://github.com/sreejan774/InventoryManagement.git
 ```
 Install the requirements:
 
